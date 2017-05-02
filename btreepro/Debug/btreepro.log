@@ -1,4 +1,5 @@
 ﻿  btreeMain.cpp
-d:\project\btreepro\btreepro\btreemain.cpp(66): error C2027: 정의되지 않은 형식 'bidnode'을(를) 사용했습니다.
-  d:\project\btreepro\btreepro\btreemain.cpp(19): note: 'bidnode' 선언을 참조하십시오.
-d:\project\btreepro\btreepro\btreemain.cpp(66): error C2227: '->node' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+d:\project\btreepro\btreepro\btreemain.cpp(164): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+d:\project\btreepro\btreepro\btreemain.cpp(185): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+  btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.exe
+  btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.pdb (Partial PDB)
