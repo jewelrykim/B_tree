@@ -1,5 +1,4 @@
 ﻿  btreeMain.cpp
-d:\project\btreepro\btreepro\btreemain.cpp(164): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-d:\project\btreepro\btreepro\btreemain.cpp(185): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+d:\project\btreepro\btreepro\btreemain.cpp(193): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
   btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.exe
   btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.pdb (Partial PDB)
