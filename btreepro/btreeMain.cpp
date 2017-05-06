@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<malloc.h>
 #pragma warning(disable:4996)
-#define membernum 1
+#define membernum 2
 
 int a;
 
@@ -71,35 +71,44 @@ int search_point(nodePtr currentnode,int targetdata) { //데이터가 들어갈 위치 0 
 	}
 	return count ;
 }
-void inputbignode(nodePtr currentnode, bignodePtr bignodetemp, int location, int targetdata) { // big노드에 추가된 데이터와 기존 데이터를 삽입하는것
+void inputbignode(nodePtr currentnode, bignodePtr bignodetemp, int location, nodePtr targetdata) { // big노드에 추가된 데이터와 기존 데이터를 삽입하는것
 	if (location == 0) {	//target이 가장 작은 수이다.
-		bignodetemp->node[0] = targetdata;
-		bignodetemp->ppointer = currentnode->ppointer;
+		
 		for (int i = 0; i < membernum ; i++) {
 			bignodetemp->node[i + 1] = currentnode->node[i];
 			bignodetemp->cpointer[i + 1] = currentnode->cpointer[i];
 		}
+		bignodetemp->node[0] = targetdata->node[0];
+		bignodetemp->cpointer[0] = targetdata->cpointer[0];
+		bignodetemp->cpointer[1] = targetdata->cpointer[1];
+		bignodetemp->ppointer = currentnode->ppointer;
 	}
 	else if (location == membernum ) { //target이 가장 큰 수 이다.
-		bignodetemp->node[membernum] = targetdata;
-		bignodetemp->ppointer = currentnode->ppointer;
+
 		for (int i = 0; i < membernum ; i++) {
 			bignodetemp->node[i ] = currentnode->node[i];
 			bignodetemp->cpointer[i] = currentnode->cpointer[i];
 		}
+		bignodetemp->node[membernum] = targetdata->node[0];
+
+		bignodetemp->cpointer[membernum] = targetdata->cpointer[0];
+		bignodetemp->cpointer[membernum+1] = targetdata->cpointer[1];
+		bignodetemp->ppointer = currentnode->ppointer;
 	}
 	else {	//target이 중간에 들어간다.
 		for (int i = 0; i < location; i++) {
 			bignodetemp->node[i] = currentnode->node[i];
 			bignodetemp->cpointer[i] = currentnode->cpointer[i];
 		}
-		bignodetemp->node[location] = currentnode->node[location];
-		bignodetemp->cpointer[location] = currentnode->cpointer[location];
-		bignodetemp->ppointer= currentnode->ppointer;
+	
 		for (int i = location+1; i < membernum+1; i++) {
 			bignodetemp->node[i] = currentnode->node[i-1];
 			bignodetemp->cpointer[i] = currentnode->cpointer[i-1];
 		}
+		bignodetemp->node[location] = currentnode->node[location];
+		bignodetemp->cpointer[location] = currentnode->cpointer[0];
+		bignodetemp->cpointer[location+1] = currentnode->cpointer[1];
+		bignodetemp->ppointer = currentnode->ppointer;
 	}
 	init_node(currentnode);
 }
@@ -124,9 +133,9 @@ int leafnodeflag(nodePtr currentnode) {
 	return 1;
 }
 
-void branchnode(nodePtr currentnode, int targetdata) {	//노드가 꽉 차있는 상태에서 삽입
+void branchnode(nodePtr currentnode, nodePtr targetdata) {	//노드가 꽉 차있는 상태에서 삽입
 	//루트인 경우와 루트가 아닌경우
-	bignodePtr bignodetemp = (bignodePtr)malloc(sizeof(bignodePtr));
+	bignodePtr bignodetemp = (bignodePtr)malloc(sizeof(bignode));
 	nodePtr newnode = (nodePtr)malloc(sizeof(datanode));
 	nodePtr newrootnode = (nodePtr)malloc(sizeof(datanode));
 	int j = 0;
@@ -134,9 +143,9 @@ void branchnode(nodePtr currentnode, int targetdata) {	//노드가 꽉 차있는 상태에
 	init_node(newnode);
 	init_node(newrootnode);
 	init_bignode(bignodetemp);
-	inputbignode(currentnode, bignodetemp, search_point(currentnode, targetdata), targetdata);
+	inputbignode(currentnode, bignodetemp, search_point(currentnode, targetdata->node[0]), targetdata);
 
-	if (bignodetemp->ppointer == NULL){//새로운 루트
+	if (bignodetemp->ppointer == NULL){//새로운 루트 currentnode를 root로
 		for (int i = 0; i < membernum / 2; i++) {
 			newrootnode->node[i] = bignodetemp->node[i];
 			newrootnode->cpointer[i] = bignodetemp->cpointer[i];
@@ -197,7 +206,7 @@ void branchnode(nodePtr currentnode, int targetdata) {	//노드가 꽉 차있는 상태에
 		}
 		newnode->ppointer = newrootnode;
 
-		branchnode(bignodetemp->ppointer, newrootnode->node[0]); //bignode의 부모와 newroot노드를 합친다.
+		branchnode(bignodetemp->ppointer, newrootnode); //bignode의 부모와 newroot노드를 합친다.
 	}
 }
 
@@ -215,7 +224,7 @@ void insert_point(nodePtr currentnode, int targetdata) {//데이터를 삽입하는 노드
 			replace_node(currentnode, point, targetnode);
 		}
 		else {	//노드에 자리가 없다.
-			branchnode(currentnode, targetdata);
+			branchnode(currentnode, targetnode);
 		}
 	}
 	free(targetnode);
