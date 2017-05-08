@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<malloc.h>
 #pragma warning(disable:4996)
-#define membernum 2
+#define membernum 3
 
 int a;
 
@@ -40,15 +40,15 @@ void search_data(nodePtr currentnode) { //특정 데이터를 찾는 함수
 	printf("%d", currentnode->node[0]);
 }
 void print_data(nodePtr currentnode) {
+
 	for (int i = 0; i < membernum; i++) {
 		printf(" %d  ", currentnode->node[i]);
 	}
-	printf("\n");
+	printf(" \n");
 
 	for (int i = 0; i < membernum+1; i++) {
 		if (currentnode->cpointer[i] != NULL) {
 			print_data(currentnode->cpointer[i]);
-			printf("\n");
 		}
 	}
 }
@@ -143,12 +143,14 @@ void branchnode(nodePtr currentnode, nodePtr targetdata) {	//노드가 꽉 차있는 상
 	init_node(newnode);
 	init_node(newrootnode);
 	init_bignode(bignodetemp);
-	inputbignode(currentnode, bignodetemp, search_point(currentnode, targetdata->node[0]), targetdata);
 
+	inputbignode(currentnode, bignodetemp, search_point(currentnode, targetdata->node[0]), targetdata);
+	
 	if (bignodetemp->ppointer == NULL){//새로운 루트 currentnode를 root로
+		newrootnode->cpointer[0] = bignodetemp->cpointer[0];
 		for (int i = 0; i < membernum / 2; i++) {
 			newrootnode->node[i] = bignodetemp->node[i];
-			newrootnode->cpointer[i] = bignodetemp->cpointer[i];
+			newrootnode->cpointer[i+1] = bignodetemp->cpointer[i+1];
 		}
 		newrootnode->ppointer = currentnode;
 
@@ -156,28 +158,31 @@ void branchnode(nodePtr currentnode, nodePtr targetdata) {	//노드가 꽉 차있는 상
 		currentnode->cpointer[0] = newrootnode;
 		currentnode->cpointer[1] = newnode;
 
-		
+		newnode->cpointer[0] = bignodetemp->cpointer[(membernum / 2)+1];
 		for (int i = (membernum / 2) + 1, j = 0; i < membernum + 1; i++, j++) {
 			newnode->node[j] = bignodetemp->node[i];
-			newnode->cpointer[j] = bignodetemp->cpointer[i];
+			newnode->cpointer[j+1] = bignodetemp->cpointer[i+1];
 		}
 		newnode->ppointer = currentnode;
 
 	}
 	else if (data_count(bignodetemp->ppointer) < membernum) { //부모노드에 자리가 있다 newroot를 부모노드에 넣는다.
-
+		
+		currentnode->cpointer[0] = bignodetemp->cpointer[0];
 		for (int i = 0; i < membernum / 2; i++) {
 			currentnode->node[i] = bignodetemp->node[i];
-			currentnode->cpointer[i] = bignodetemp->cpointer[i];
+			currentnode->cpointer[i+1] = bignodetemp->cpointer[i+1];
 		}
 		currentnode->ppointer = newrootnode;
 
 		newrootnode->node[0] = bignodetemp->node[membernum / 2];
 		newrootnode->cpointer[0] = currentnode;
 		newrootnode->cpointer[1] = newnode;
+
+		newnode->cpointer[0] = bignodetemp->cpointer[(membernum / 2) + 1];
 		for (int i = (membernum / 2) + 1, j = 0; i < membernum + 1; i++, j++) {
 			newnode->node[j] = bignodetemp->node[i];
-			newnode->cpointer[j] = bignodetemp->cpointer[i];
+			newnode->cpointer[j+1] = bignodetemp->cpointer[i+1];
 		}
 		newnode->ppointer = newrootnode;
 		point = search_point(bignodetemp->ppointer, bignodetemp->node[0]);
@@ -188,21 +193,24 @@ void branchnode(nodePtr currentnode, nodePtr targetdata) {	//노드가 꽉 차있는 상
 		currentnode->ppointer = bignodetemp->ppointer; //부모노드를 bignode의 부모로 바꾼다.
 
 		newnode->ppointer = bignodetemp->ppointer;
+		//if(bignodetemp->ppointer)
 	}
 	else {//부모노드에 자리가 없다.
+		currentnode->cpointer[0] = bignodetemp->cpointer[0];
 		for (int i = 0; i < membernum / 2; i++) {
 			currentnode->node[i] = bignodetemp->node[i];
-			currentnode->cpointer[i] = bignodetemp->cpointer[i];
+			currentnode->cpointer[i + 1] = bignodetemp->cpointer[i + 1];
 		}
 		currentnode->ppointer = newrootnode;
 
 		newrootnode->node[0] = bignodetemp->node[membernum / 2];
 		newrootnode->cpointer[0] = currentnode;
 		newrootnode->cpointer[1] = newnode;
-		int j;
+
+		newnode->cpointer[0] = bignodetemp->cpointer[(membernum / 2) + 1];
 		for (int i = (membernum / 2) + 1, j = 0; i < membernum + 1; i++, j++) {
 			newnode->node[j] = bignodetemp->node[i];
-			newnode->cpointer[j] = bignodetemp->cpointer[i];
+			newnode->cpointer[j + 1] = bignodetemp->cpointer[i + 1];
 		}
 		newnode->ppointer = newrootnode;
 
@@ -210,14 +218,15 @@ void branchnode(nodePtr currentnode, nodePtr targetdata) {	//노드가 꽉 차있는 상
 	}
 }
 
-void insert_point(nodePtr currentnode, int targetdata) {//데이터를 삽입하는 노드
+void insert_point(nodePtr currentnode, nodePtr parent, int targetdata) {//데이터를 삽입하는 노드
 	int point;
 	nodePtr targetnode = (nodePtr)malloc(sizeof(datanode));
 	init_node(targetnode);
 	targetnode->node[0]= targetdata;
 	point = search_point(currentnode, targetdata);
+	currentnode->ppointer = parent;
 	if (leafnodeflag(currentnode)== 0) {  //리프노드가 아니다.
-		insert_point(currentnode->cpointer[point], targetdata);
+		insert_point(currentnode->cpointer[point],currentnode, targetdata);
 	}
 	else {	//리프노드다
 		if (data_count(currentnode) < membernum) {	//노드에 자리가 있다
@@ -233,7 +242,7 @@ void insert_point(nodePtr currentnode, int targetdata) {//데이터를 삽입하는 노드
 void inseart_data(nodePtr currentnode) {
 	printf("입력하세요\n");
 	scanf("%d", &a);
-	insert_point(currentnode, a);
+	insert_point(currentnode,NULL, a);
 }
 
 int memu() {
