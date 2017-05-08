@@ -36,9 +36,6 @@ void init_bignode(bignodePtr initbignode) {
 	initbignode->cpointer[membernum+1] = NULL;
 }
 
-void search_data(nodePtr currentnode) { //특정 데이터를 찾는 함수
-	printf("%d", currentnode->node[0]);
-}
 void print_data(nodePtr currentnode) {
 
 	for (int i = 0; i < membernum; i++) {
@@ -238,11 +235,27 @@ void insert_point(nodePtr currentnode, nodePtr parent, int targetdata) {//데이터
 	}
 	free(targetnode);
 }
-
 void inseart_data(nodePtr currentnode) {
 	printf("입력하세요\n");
 	scanf("%d", &a);
 	insert_point(currentnode,NULL, a);
+}
+
+void search_data(nodePtr currentnode,int targetdata) { //특정 데이터를 찾는 함수
+	for (int i = 0; i < membernum; i++)
+	{
+		if (currentnode->node[i] == targetdata) {
+			printf("yes %d", targetdata);
+			return ;
+		}
+		else if (currentnode->node[i]>targetdata) {
+			search_data(currentnode->cpointer[i], targetdata);
+		}
+		else if(currentnode->node[i+1]==NULL){
+			search_data(currentnode->cpointer[i + 1], targetdata);
+		}
+	}
+	printf("no data here");
 }
 
 int memu() {
@@ -252,6 +265,7 @@ int memu() {
 }
 void main() {
 	nodePtr initnode = (nodePtr)malloc(sizeof(datanode));
+	int b;
 	printf("입력하세요\n");
 	scanf("%d", &a);
 	init_node(initnode);
@@ -260,7 +274,9 @@ void main() {
 		switch (a)
 		{
 		case 1:
-			//search_data();
+			printf("입력하세요\n");
+			scanf("%d", &b);
+			search_data(initnode,b);
 			break;
 		case 2:
 			inseart_data(initnode);

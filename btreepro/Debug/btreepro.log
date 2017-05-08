@@ -1,3 +1,3 @@
 ﻿  btreeMain.cpp
-  btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.exe
-  btreepro.vcxproj -> D:\project\btreepro\Debug\btreepro.pdb (Partial PDB)
+d:\project\btreepro\btreepro\btreemain.cpp(253): error C2660: 'search_data': 함수는 2개의 매개 변수를 사용하지 않습니다.
+d:\project\btreepro\btreepro\btreemain.cpp(256): error C2660: 'search_data': 함수는 2개의 매개 변수를 사용하지 않습니다.
